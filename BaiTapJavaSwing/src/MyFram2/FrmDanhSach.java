@@ -168,7 +168,7 @@ public class FrmDanhSach extends JFrame {
 		
 		list1.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if (kt != 0) {
+				if (kt != 0) { // đảm bảo rằng đã nạp List 
 					String st = list1.getSelectedItem(); // lấy mã sinh viên chọn ở list1
 					int dsSize = ds.size();
 					for (int i = 0; i < dsSize; i++) { // duyệt ds
