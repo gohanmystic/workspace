@@ -1,0 +1,20 @@
+Sv1
+Nguyen Hoang Ha
+tin
+6
+Sv2
+Le Hung Nam
+toan
+3
+Sv3
+Tran Quoc Vu
+tin
+10
+Sv4
+Tran Quoc Tuan
+ly
+10
+Sv4
+Nguyen Son Tung
+hoa
+10
