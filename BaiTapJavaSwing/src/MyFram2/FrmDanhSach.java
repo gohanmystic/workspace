@@ -3,6 +3,7 @@ package MyFram2;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import javax.naming.directory.DirContext;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,11 +19,20 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class FrmDanhSach extends JFrame {
+
 
 	private JPanel contentPane;
 
@@ -75,6 +85,7 @@ public class FrmDanhSach extends JFrame {
 		contentPane.add(label_3);
 
 		TextField txtmasv = new TextField();
+		txtmasv.setEditable(false);
 		txtmasv.setBounds(112, 38, 137, 22);
 		contentPane.add(txtmasv);
 
@@ -86,21 +97,22 @@ public class FrmDanhSach extends JFrame {
 		txtdtb.setBounds(112, 94, 137, 22);
 		contentPane.add(txtdtb);
 
-		Button btnnhap = new Button("New button");
+		Button btnnhap = new Button("Nhap");
 		btnnhap.setBounds(275, 10, 70, 22);
 		contentPane.add(btnnhap);
 
-		Button btnluufile = new Button("New button");
+		Button btnluufile = new Button("Luu File");
+
 		btnluufile.setBounds(354, 10, 70, 22);
 		contentPane.add(btnluufile);
 
-		Button btnsua = new Button("New button");
-		btnsua.setBounds(275, 38, 70, 22);
-		contentPane.add(btnsua);
-
-		Button btntimkiem = new Button("New button");
-		btntimkiem.setBounds(354, 38, 70, 22);
+		Button btntimkiem = new Button("Tim Kiem");
+		btntimkiem.setBounds(275, 38, 70, 22);
 		contentPane.add(btntimkiem);
+
+		Button btnsua = new Button("Sua");
+		btnsua.setBounds(354, 38, 70, 22);
+		contentPane.add(btnsua);
 
 		Label label_4 = new Label("Danh sach cac sinh vien");
 		label_4.setBounds(10, 122, 144, 22);
@@ -113,6 +125,14 @@ public class FrmDanhSach extends JFrame {
 		Choice Choice1 = new Choice();
 		Choice1.setBounds(112, 12, 137, 20);
 		contentPane.add(Choice1);
+		
+		Button btnxoa = new Button("Xoa");
+		btnxoa.setBounds(275, 66, 70, 22);
+		contentPane.add(btnxoa);
+		
+		Button btnthoat = new Button("Thoat");
+		btnthoat.setBounds(354, 66, 70, 22);
+		contentPane.add(btnthoat);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -166,6 +186,7 @@ public class FrmDanhSach extends JFrame {
 			}
 		});
 		
+		//sự kiện thay đổi cái textfield khi thay đổi item ở List1
 		list1.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (kt != 0) { // đảm bảo rằng đã nạp List 
@@ -180,6 +201,138 @@ public class FrmDanhSach extends JFrame {
 						}
 					}
 				}
+			}
+		});
+		
+		//sự kiện click vào button Nhap
+		btnnhap.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String masvnhap = JOptionPane.showInputDialog("Nhap vao masv can them: ");
+				int ktma = 0; //kiểm tra mã đã tồn tại hay chưa
+				int dsSize = ds.size();
+				
+				for (int i = 0; i < dsSize; i++) {
+					SinhVien sv = (SinhVien) ds.get(i);
+					if(sv.masv.equalsIgnoreCase(masvnhap)){
+						ktma = 1; break; // nếu tồn tại mã sv, gán biến ktma = 1, thoát vòng for
+					}
+				}
+				if (ktma == 0) { // nếu biến ktma = 0, tức vòng for trên làm biến ktma không thay đổi
+					String htnhap = JOptionPane.showInputDialog("Nhap vao ho ten: ");
+					
+					String tenlopnhap = JOptionPane.showInputDialog("Nhap vao khoa: ");
+					
+					String dtbnhap = JOptionPane.showInputDialog("Nhap diem trung binh: ");
+					//khởi tạo một SinhVien mới với dữ liệu ở các textfield
+					SinhVien sv = new SinhVien(masvnhap, htnhap, tenlopnhap, Double.parseDouble(dtbnhap));
+					
+					ds.add(sv); // thêm vào ds
+					
+					NapList(list1, txtmasv, txtht, txtdtb, Choice1.getSelectedItem()); // nạp vào List
+					JOptionPane.showMessageDialog(null, "Nhap thanh cong!");
+				} else {
+					JOptionPane.showMessageDialog(null, "Ma sinh vien da ton tai");
+				}
+			}
+		});
+		
+		//sự kiện click vào nút Luu File
+		btnluufile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					// mở file ds.txt để ghi
+					FileOutputStream FOS = new FileOutputStream("ds.txt");
+					OutputStreamWriter OSW = new OutputStreamWriter(FOS);
+					PrintWriter PWds = new PrintWriter(OSW);
+					
+					int dsSize = ds.size();
+					for (int i = 0; i < dsSize; i++) {
+						SinhVien sv = (SinhVien) ds.get(i);
+						PWds.println(sv.masv);
+						PWds.println(sv.ht);
+						PWds.println(sv.tenlop);
+						PWds.println(sv.dtb);
+					}
+					PWds.close();
+					JOptionPane.showMessageDialog(null, "Luu file thanh cong!");
+				} catch (FileNotFoundException e1) {
+					JOptionPane.showMessageDialog(null, "Loi cmnr!");
+				}
+			}
+		});
+		
+		
+		//sự kiện click vào nút tìm kiếm
+		btntimkiem.addActionListener(new ActionListener() {
+			public int GetIndexOfChoiceName (Choice choice, String nameChoice) {
+				int size = choice.getItemCount();
+				for (int i = 0; i < size; i++) {
+					if (choice.getItem(i).toLowerCase().equals(nameChoice.toLowerCase())) {
+						return i;
+					}
+				}
+				return -1;
+			}
+			public void actionPerformed(ActionEvent e) {
+				String st = JOptionPane.showInputDialog("Nhap vao ma sv can tim");
+				
+				int dsSize = ds.size();
+				for (int i = 0; i < dsSize; i++) {
+					SinhVien sv = (SinhVien) ds.get(i);
+					if(sv.masv.toLowerCase().equals(st)){
+						txtmasv.setText(sv.masv);
+						txtht.setText(sv.ht);
+						txtdtb.setText(String.valueOf(sv.dtb));
+						
+						Choice1.select(GetIndexOfChoiceName(Choice1, sv.tenlop));
+						return;
+					}
+				}
+				JOptionPane.showMessageDialog(null, "Khong tim thay masv " + st);
+			}
+		});
+		
+		//sự kiện click vào nút sua
+		btnsua.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int dsSize = ds.size();
+				for (int i = 0; i < dsSize; i++) { // duyệt ds
+					SinhVien sv =  (SinhVien) ds.get(i);
+					if(sv.masv.equals(txtmasv.getText())) {
+						sv.DoiTen(txtht.getText());
+						sv.DoiDtb(Double.parseDouble(txtdtb.getText()));
+						String tenlop = Choice1.getSelectedItem();
+						sv.DoiLop(tenlop);
+						ds.set(i, sv); // không hiểu đoạn ni để làm chi
+						NapList(list1, txtmasv, txtht, txtdtb, tenlop);
+						JOptionPane.showMessageDialog(null, "Sua thanh cong");
+					}
+				}
+			}
+		});
+		//sự kiện xóa
+		btnxoa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int dialogResult =  JOptionPane.showConfirmDialog(null, "Chac chan muon xoa?"); // cormfim diaglog (google để biết thêm chi tiết)
+				
+				if (dialogResult == JOptionPane.YES_NO_OPTION) {
+					int dsSize = ds.size();
+					for (int i = 0; i <dsSize; i++) {
+						SinhVien sv = (SinhVien) ds.get(i);
+						if(sv.masv.equals(txtmasv.getText())){
+							ds.remove(i);
+							NapList(list1, txtmasv, txtht, txtdtb, Choice1.getSelectedItem());
+							JOptionPane.showMessageDialog(null, "Xoa thanh cong masv " + sv.masv);
+							
+						}
+					}
+				}
+			}
+		});
+		//sự kiện thoát
+		btnthoat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0); // đóng form
 			}
 		});
 	}

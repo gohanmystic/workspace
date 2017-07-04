@@ -1,15 +1,11 @@
-Sv1
-Nguyen Hoang Ha
-tin
-6.5
 Sv2
 Le Hung Nam
 toan
-3
+3.0
 Sv3
 Tran Quoc Vu
 tin
-10
+10.0
 Sv4
 Tran Quoc Tuan
 ly
@@ -19,10 +15,22 @@ Nguyen Son Tung
 hoa
 8.9
 Sv6
-Truong Tung Son
-ly
+Tung Son
+Ly
 5.5
+Sv8
+Tung Nui
+Hoa
+10.0
+Sv9
+Gdragon
+Tin
+5.8
 Sv7
 Le Van Luyen
-toan
+Toan
 6.7
+sv1
+Nguyen Hoang Ha
+tin
+7.0
