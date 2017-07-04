@@ -154,6 +154,7 @@ public class FrmDanhSach extends JFrame {
 					e1.printStackTrace();
 				}
 				NapList(list1, txtmasv, txtht, txtdtb, Choice1.getSelectedItem());
+				kt = 1;
 			}
 		});
 		
@@ -164,6 +165,23 @@ public class FrmDanhSach extends JFrame {
 				NapList(list1, txtmasv, txtht, txtdtb, Choice1.getSelectedItem());
 			}
 		});
+		
+		list1.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (kt != 0) {
+					String st = list1.getSelectedItem(); // lấy mã sinh viên chọn ở list1
+					int dsSize = ds.size();
+					for (int i = 0; i < dsSize; i++) { // duyệt ds
+						SinhVien sv = (SinhVien) ds.get(i); // lấy mã sinh viên thứ i từ danh sach
+						if(sv.masv.equals(st)){
+							txtmasv.setText(sv.masv);
+							txtht.setText(sv.ht);
+							txtdtb.setText(String.valueOf(sv.dtb));
+						}
+					}
+				}
+			}
+		});
 	}
 
 	// hàm NapList truyền List1, các textfield, tên lớp
@@ -171,7 +189,8 @@ public class FrmDanhSach extends JFrame {
 	public void NapList(List list1, TextField txtmasv, TextField txtht, TextField txtdtb, String tenlop) {
 		list1.clear();
 		
-		for (int i = 0; i < ds.size(); i++) {
+		int dsSize = ds.size();
+		for (int i = 0; i < dsSize; i++) {
 			SinhVien sv = (SinhVien) ds.get(i);
 			if (sv.tenlop.toLowerCase().equals(tenlop.toLowerCase())) {
 				// nap du lieu vao text field;
